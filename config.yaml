@@ -1,0 +1,15 @@
+
+server:
+  server_addr: 0.0.0.0
+  listen_port: 8888
+
+
+mysql:
+  path: 99.0.85.123
+  port: 3306
+  config: charset=utf8&parseTime=True&loc=Local
+  db: nv
+  username: nv
+  password: 123456
+  max-idle-conns: 10
+  max-open-conns: 100
