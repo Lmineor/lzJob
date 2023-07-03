@@ -1,4 +1,4 @@
-package lzJob
+package task
 
 import "fmt"
 

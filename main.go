@@ -1,24 +1,24 @@
-package lzJob
+package main
 
 import (
-	gocontext "context"
-	"github.com/Lmineor/lzJob/context"
-	"github.com/Lmineor/lzJob/pqueue"
+	goflag "flag"
+	"fmt"
+	"github.com/Lmineor/lzJob/cmd"
+	"k8s.io/klog/v2"
+	"math/rand"
+	"os"
+	"time"
 )
 
-func buildContext(cfg *Config) context.LZContext {
-	db := initMysql(&cfg.Mysql)
-	ctx := gocontext.Background()
-	pq := pqueue.NewPriorityQueue()
-	return context.LZContext{
-		Ctx: ctx,
-		DB:  db,
-		PQ:  pq,
-	}
-}
-
 func main() {
-	cfg := InitConfig("/abc/def")
-	ctx := buildContext(cfg)
-	Trigger(ctx)
+	rand.Seed(time.Now().UnixNano())
+	klog.InitFlags(nil)
+	// By default klog writes to stderr. Setting logtostderr to false makes klog
+	goflag.Set("logtostderr", "false")
+	command := cmd.RootCmd()
+	defer klog.Flush()
+	if err := command.Execute();err != nil{
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }

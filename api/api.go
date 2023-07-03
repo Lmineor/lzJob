@@ -1,8 +1,9 @@
-package lzJob
+package api
 
 import (
 	"github.com/Lmineor/lzJob/context"
 	"github.com/Lmineor/lzJob/store"
+	"github.com/Lmineor/lzJob/task"
 	"github.com/emicklei/go-restful"
 	"k8s.io/klog/v2"
 )
@@ -14,7 +15,7 @@ func (t TaskSvc) GetTask(ctx context.LZContext) func(request *restful.Request, r
 		taskId := request.PathParameter("id")
 
 		klog.Infof("get task %s", taskId)
-		ts, err := store.GetTask(ctx, taskId)
+		ts, err := task.GetTask(ctx, taskId)
 		if err != nil {
 			BadRequestResp(response, err)
 			return
@@ -35,7 +36,7 @@ func (t TaskSvc) GetTaskResult(ctx context.LZContext) func(request *restful.Requ
 			return
 		}
 		klog.Infof("get task result %s", taskId)
-		ts, total, err := store.GetTaskResult(ctx, taskId, pageSize, page)
+		ts, total, err := task.GetTaskResult(ctx, taskId, pageSize, page)
 		if err != nil {
 			BadRequestResp(response, err)
 			return
@@ -61,7 +62,7 @@ func (t TaskSvc) GetTasksResult(ctx context.LZContext) func(request *restful.Req
 			return
 		}
 		klog.Infof("get tasks result")
-		tasksResult, total, err := store.GetTasksResult(ctx, pageSize, page)
+		tasksResult, total, err := task.GetTasksResult(ctx, pageSize, page)
 		if err != nil {
 			BadRequestResp(response, err)
 			return
@@ -87,7 +88,7 @@ func (t TaskSvc) GetTasks(ctx context.LZContext) func(request *restful.Request, 
 			return
 		}
 		klog.Infof("get tasks")
-		tasks, total, err := store.GetTasks(ctx, pageSize, page)
+		tasks, total, err := task.GetTasks(ctx, pageSize, page)
 		if err != nil {
 			BadRequestResp(response, err)
 			return
@@ -105,12 +106,12 @@ func (t TaskSvc) GetTasks(ctx context.LZContext) func(request *restful.Request, 
 
 func (t TaskSvc) RegisterTask(ctx context.LZContext) func(request *restful.Request, response *restful.Response) {
 	return func(request *restful.Request, response *restful.Response) {
-		var task TaskReqBody
-		request.ReadEntity(&task)
+		var t TaskReqBody
+		request.ReadEntity(&t)
 
-		klog.Infof("register task %s", task)
-		taskObj := toTaskObj(task)
-		err := store.AddTask(ctx, taskObj)
+		klog.Infof("register task %s", t)
+		taskObj := toTaskObj(t)
+		err := task.AddTask(ctx, taskObj)
 		if err != nil {
 			BadRequestResp(response, err)
 			return
@@ -122,14 +123,14 @@ func (t TaskSvc) RegisterTask(ctx context.LZContext) func(request *restful.Reque
 
 func (t TaskSvc) UpdateTask(ctx context.LZContext) func(request *restful.Request, response *restful.Response) {
 	return func(request *restful.Request, response *restful.Response) {
-		var task TaskReqBody
+		var t TaskReqBody
 
 		taskId := request.PathParameter("id")
-		request.ReadEntity(&task)
+		request.ReadEntity(&t)
 
-		klog.Infof("update task %s", task)
-		taskObj := toTaskObj(task)
-		err := store.UpdateTask(ctx, taskId, taskObj)
+		klog.Infof("update task %s", t)
+		taskObj := toTaskObj(t)
+		err := task.UpdateTask(ctx, taskId, taskObj)
 		if err != nil {
 			BadRequestResp(response, err)
 			return
@@ -144,7 +145,7 @@ func (t TaskSvc) DeleteTask(ctx context.LZContext) func(request *restful.Request
 		taskId := request.PathParameter("id")
 
 		klog.Infof("delete task %s", taskId)
-		err := store.DeleteTask(ctx, taskId)
+		err := task.DeleteTask(ctx, taskId)
 		if err != nil {
 			BadRequestResp(response, err)
 			return

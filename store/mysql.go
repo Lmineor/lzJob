@@ -1,12 +1,13 @@
-package lzJob
+package store
 
 import (
+	"github.com/Lmineor/lzJob/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"k8s.io/klog/v2"
 )
 
-func initMysql(cfg *Mysql) *gorm.DB {
+func InitMysql(cfg *config.Mysql) *gorm.DB {
 	if cfg.Db == "" {
 		return nil
 	}

@@ -1,4 +1,4 @@
-package lzJob
+package api
 
 import (
 	"github.com/emicklei/go-restful"
@@ -22,10 +22,12 @@ func InternalErrorResp(response *restful.Response, err error) {
 	}
 	response.WriteHeaderAndJson(internal.Status, internal, restful.MIME_JSON)
 }
+
 func SuccessResp(response *restful.Response) {
 	su := success{Msg: "ok", Status: http.StatusOK}
 	response.WriteHeaderAndJson(su.Status, su, restful.MIME_JSON)
 }
+
 func SuccessRespWithData(response *restful.Response, data interface{}) {
 	successWithData := successWithData{
 		success: success{Msg: "ok", Status: http.StatusOK},

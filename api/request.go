@@ -1,4 +1,4 @@
-package lzJob
+package api
 
 import (
 	"fmt"
@@ -27,7 +27,7 @@ func ParsePagination(pageParam, pageSizeParam string) (page int, pageSize int, e
 	strPageSize := pageSizeParam
 	page, err = strconv.Atoi(strPage)
 	if err != nil {
-		return 0, 0, fmt.Errorf("page 和pageSize值不合法")
+		return 0, 0, fmt.Errorf("page和pageSize值不合法")
 
 	}
 	pageSize, err = strconv.Atoi(strPageSize)

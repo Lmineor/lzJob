@@ -1,6 +1,7 @@
-package lzJob
+package config
 
 import (
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"k8s.io/klog/v2"
@@ -13,12 +14,12 @@ type Config struct {
 
 type Server struct {
 	ServerAddr string `yaml:"server_addr"`
-	ListenPort int    `yaml:"listen_port"`
+	ListenPort int32  `yaml:"listen_port"`
 }
 
 type Mysql struct {
 	Path         string `yaml:"path"`
-	Port         string `yaml:"port"`
+	Port         int32  `yaml:"port"`
 	Username     string `yaml:"username"`
 	Password     string `yaml:"password"`
 	Db           string `yaml:"db"`
@@ -28,7 +29,8 @@ type Mysql struct {
 }
 
 func (m *Mysql) Dsn() string {
-	return m.Username + ":" + m.Password + "@tcp(" + m.Path + ":" + m.Port + ")/" + m.Db + "?" + m.Config
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?%s", m.Username, m.Password, m.Path, m.Port, m.Db, m.Config)
+	//return m.Username + ":" + m.Password + "@tcp(" + m.Path + ":" + m.Port + ")/" + m.Db + "?" + m.Config
 }
 
 func ReadConfig(configPath string) (*Config, error) {
