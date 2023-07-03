@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	gocontext "context"
 	goflag "flag"
 	"fmt"
 	"github.com/Lmineor/lzJob/api"
@@ -84,7 +83,11 @@ func initCfg(f *Flags) *config.Config {
 
 func run(f *Flags) {
 	cfg := initCfg(f)
-	ctx := buildContext(cfg)
+	db := store.InitMysql(&cfg.Mysql)
+	pq := pqueue.NewPriorityQueue()
+
+	ctx := context.New(cfg, db, pq)
+
 	if ctx.DB != nil {
 		registerTables(ctx)
 		db, _ := ctx.DB.DB()
@@ -111,16 +114,4 @@ func registerTables(ctx context.LZContext) {
 		klog.Fatalf("register table failed %s", err)
 	}
 	klog.Info("register table success")
-}
-
-func buildContext(cfg *config.Config) context.LZContext {
-	db := store.InitMysql(&cfg.Mysql)
-	ctx := gocontext.Background()
-	pq := pqueue.NewPriorityQueue()
-	return context.LZContext{
-		Ctx: ctx,
-		DB:  db,
-		PQ:  pq,
-		Cfg: cfg,
-	}
 }
